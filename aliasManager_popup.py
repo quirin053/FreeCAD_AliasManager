@@ -1,3 +1,5 @@
+
+
 # ============================================================================================================
 # ============================================================================================================
 # ==                                                                                                        ==
@@ -33,9 +35,9 @@ __title__   = "alias manager"
 __author__  = "Pablo Gil Fernandez"
 __version__ = "01.00"
 __date__    = "20/11/2016"
- 
+
 __Comment__ = "This macro helps managing aliases inside FreeCAD Spreadsheet workbench. It is able to create, delete, move aliases and create a 'part family' group of files"
- 
+
 __Wiki__ = "https://github.com/pgilfernandez/FreeCAD_AliasManager"
 __Help__ = "https://github.com/pgilfernandez/FreeCAD_AliasManager"
 __Status__ = "stable"
@@ -101,12 +103,13 @@ class p():
             column_to = self.d3.currentText()
             row_from = self.d4.value()
             row_to = self.d5.value()
+            column_getfrom = self.d7.currentText()
 
 
 # ===== Mode - Set ==============================================
             if mode == "Set aliases":
                 for i in range(row_from,row_to+1):
-                    cell_from = 'A' + str(i)
+                    cell_from = str(column_getfrom) + str(i)
                     cell_to = str(column_from) + str(i)
                     App.ActiveDocument.Spreadsheet.setAlias(cell_to, '')
                     App.ActiveDocument.Spreadsheet.setAlias(cell_to, App.ActiveDocument.Spreadsheet.getContents(cell_from))
@@ -200,9 +203,10 @@ class p():
 
         except:
             FreeCAD.Console.PrintError("\nUnable to complete task\n")
- 
+            raise
+
             self.close()
- 
+
 
     def close(self):
         self.dialog.hide()
@@ -280,6 +284,16 @@ class p():
                 self.d2.addItem(alphabet_list[i] + alphabet_list[j])
         self.d2.setCurrentIndex(1) # set default item
 
+        iN7 = QtGui.QLabel("getfrom:")
+        iN7.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.d7 = QtGui.QComboBox()
+        for i in range(0,26):
+            self.d7.addItem(alphabet_list[i])
+        for i in range(0,26):
+            for j in range(0,26):
+                self.d7.addItem(alphabet_list[i] + alphabet_list[j])
+        self.d7.setCurrentIndex(0) # set default item
+
         iN3 = QtGui.QLabel("to")
         iN3.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
         iN3.hide() # set initial state hidden
@@ -335,6 +349,9 @@ class p():
         # to row
         grid.addWidget(iN5,     4, 0, 1, 1)
         grid.addWidget(self.d5, 4, 1)
+        #getfrom
+        grid.addWidget(iN7,     5, 0, 1, 1)
+        grid.addWidget(self.d7, 5, 1)
         # + info
         grid.addWidget(self.d6, 6, 0, 1, 1)
         # cancel, OK
@@ -359,4 +376,4 @@ class p():
     def popup(self):
         self.dialog2 = infoPopup()
         self.dialog2.exec_()
-p() 
+p()
